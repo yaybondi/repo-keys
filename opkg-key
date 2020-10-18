@@ -1,0 +1,152 @@
+#!/bin/sh
+# vi: set expandtab sw=4 sts=4: */
+#
+#  Copyright (C) 2019 Tobias Koch
+#
+#  This program is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2, or (at
+#  your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful, but
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  General Public License for more details.
+#
+
+OFFLINE_ROOT=""
+
+##############################################################################
+# FUNCTIONS
+##############################################################################
+
+die() {
+    echo "opkg-key: $1" >&2
+    exit 1
+}
+
+usage() {
+    echo "Usage: opkg-key [options] command [arguments]"
+    echo
+    echo "Manage opkg's list of trusted keys"
+    echo
+    echo "Commands and arguments:"
+    echo "  add <file>          - Add the key contained in <file> ('-' for stdin)"
+    echo "  del <keyid>         - Remove the key <keyid>"
+    echo "  list                - List keys"
+    echo "  reset               - Remove all keys, resetting the keyring"
+    echo "  populate            - Import keys from /usr/share/opkg/usign"
+    echo "  help                - Print this usage message and exit"
+    echo
+    echo "Options:"
+    echo "  -o <root>           - Use <root> as the offline root directory"
+    echo
+}
+
+do_add() {
+    if [ "x$1" = "x" ]; then
+        die "please supply a key-id."
+    fi
+
+    if [ "$1" != "-" ] && [ ! -f "$1" ]; then
+        die "no such file."
+    fi
+
+    FINGERPRINT=`usign -F -p "$1"`
+
+    if [ "$?" -ne "0" ]; then
+        die "cannot import this key as a trusted public key."
+    fi
+
+    if [ ! -f "$OFFLINE_ROOT/etc/opkg/usign/trustdb/$FINGERPRINT" ]; then
+        cp "$1" "$OFFLINE_ROOT/etc/opkg/usign/trustdb/$FINGERPRINT"
+    fi
+}
+
+do_del() {
+    if [ "x$1" = "x" ]; then
+        die "please supply a key-id."
+    fi
+
+    if [ ! -f "$OFFLINE_ROOT/etc/opkg/usign/trustdb/$1" ]; then
+        die "given key-id not found."
+    fi
+
+    rm -f "$OFFLINE_ROOT/etc/opkg/usign/trustdb/$1"
+}
+
+do_list() {
+    ls "$OFFLINE_ROOT/etc/opkg/usign/trustdb" | while read KEYFILE; do
+        DESCRIPTION=$(
+            head -n1 "$OFFLINE_ROOT/etc/opkg/usign/trustdb/$KEYFILE" | sed \
+                -e 's/untrusted comment:[[:space:]]*//g' \
+                -e 's/|[[:space:]]*[^[:space:]]\+$//g'
+        )
+
+        if [ "x$DESCRIPTION" != "x" ] && [ "$DESCRIPTION" != "$KEYFILE" ]; then
+            echo "$KEYFILE - $DESCRIPTION"
+        else
+            echo "$KEYFILE"
+        fi
+    done
+}
+
+do_reset() {
+    find "$OFFLINE_ROOT/etc/opkg/usign/trustdb" \
+        -type f -exec rm -f '{}' ';'
+}
+
+do_populate() {
+    find "$OFFLINE_ROOT/usr/share/opkg/usign" -name "*.pub" -type f | \
+    while read KEYFILE; do
+        do_add "$KEYFILE"
+    done
+}
+
+##############################################################################
+# MAIN
+##############################################################################
+
+while true; do
+    case "$1" in
+        -o)
+            OFFLINE_ROOT="$2"
+            shift 2
+
+            if [ ! -d "$OFFLINE_ROOT" ]; then
+                die "offline root '$OFFLINE_ROOT' not found."
+            fi
+            ;;
+        *)
+            break
+            ;;
+    esac
+done
+
+case "$1" in
+    add)
+        shift
+        do_add $1
+        ;;
+    del)
+        shift
+        do_del $1
+        ;;
+    list)
+        do_list
+        ;;
+    reset)
+        do_reset
+        ;;
+    populate)
+        do_populate
+        ;;
+    help|-h|--help)
+        usage
+        exit 0
+        ;;
+    *)
+        usage
+        exit 1
+        ;;
+esac
