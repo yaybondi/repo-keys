@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: bolt-repo-keys
+Source: https://github.com/boltlinux/bolt-repo-keys
+
+Files: *
+Copyright: 2020 Bolt Linux Project
+License: undefined
+ This repository/source tree contains auto-generated cryptographic keys.
