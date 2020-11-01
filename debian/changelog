@@ -1,3 +1,7 @@
+bolt-repo-keys (20200705.01-2) unstable; urgency=medium
+
+  * Fix postinst script failure when opkg is not installed.
+
 bolt-repo-keys (20200705.01-1) unstable; urgency=medium
 
   * Initial packaging
