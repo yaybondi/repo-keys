@@ -1,5 +1,5 @@
 #!/bin/sh
-# prerm script for bolt-repo-keys
+# prerm script for bondi-repo-keys
 #
 # see: dh_installdeb(1)
 

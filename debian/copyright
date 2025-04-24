@@ -1,8 +1,8 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: bolt-repo-keys
-Source: https://github.com/boltlinux/bolt-repo-keys
+Upstream-Name: bondi-repo-keys
+Source: https://github.com/yaybondi/repo-keys
 
 Files: *
-Copyright: 2020 Bolt Linux Project
+Copyright: 2020 Bondi Linux Project
 License: undefined
  This repository/source tree contains auto-generated cryptographic keys.

@@ -1,5 +1,5 @@
 #!/bin/sh
-# postinst script for bolt-repo-keys
+# postinst script for bondi-repo-keys
 #
 # see: dh_installdeb(1)
 

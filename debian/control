@@ -1,14 +1,14 @@
-Source: bolt-repo-keys
+Source: bondi-repo-keys
 Section: admin
 Priority: optional
 Maintainer: Tobias Koch <tobias.koch@gmail.com>
 Build-Depends: debhelper (>= 11)
 Standards-Version: 4.1.3
-Homepage: https://github.com/boltlinux/bolt-repo-keys
+Homepage: https://github.com/yaybondi/repo-keys
 
-Package: bolt-repo-keys
+Package: bondi-repo-keys
 Architecture: all
 Depends: usign, ${misc:Depends}
-Description: Bolt Linux repository usign signing keys (public keys)
+Description: Bondi OS repository usign signing keys (public keys)
  This package contains the public portion of the repository signing keys of
- the Bolt Linux distribution generated and processed with the usign utility.
+ the Bondi OS distribution generated and processed with the usign utility.

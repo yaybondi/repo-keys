@@ -6,11 +6,11 @@ export DH_VERBOSE = 1
 	dh $@
 
 override_dh_auto_install:
-	install -m 0755 -d debian/bolt-repo-keys/etc/opkg/usign/trustdb
-	install -m 0755 -d debian/bolt-repo-keys/usr/share/opkg/usign/bolt-repo-keys
-	install -m 0755 -d debian/bolt-repo-keys/usr/bin
+	install -m 0755 -d debian/bondi-repo-keys/etc/opkg/usign/trustdb
+	install -m 0755 -d debian/bondi-repo-keys/usr/share/opkg/usign/bondi-repo-keys
+	install -m 0755 -d debian/bondi-repo-keys/usr/bin
 	
 	install -m 0644 *.pub \
-		debian/bolt-repo-keys/usr/share/opkg/usign/bolt-repo-keys
+		debian/bondi-repo-keys/usr/share/opkg/usign/bondi-repo-keys
 	install -m 0755 opkg-key \
-		debian/bolt-repo-keys/usr/bin
+		debian/bondi-repo-keys/usr/bin
